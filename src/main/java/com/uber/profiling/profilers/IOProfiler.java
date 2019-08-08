@@ -20,6 +20,8 @@ import com.uber.profiling.Profiler;
 import com.uber.profiling.Reporter;
 import com.uber.profiling.util.ProcFileUtils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +68,13 @@ public class IOProfiler extends ProfilerBase implements Profiler {
         map.put("name", getProcessName());
         map.put("host", getHostName());
         map.put("processUuid", getProcessUuid());
-        map.put("appId", getAppId());
+        map.put("id", getAppId());
+
+        SimpleDateFormat timestampFormat = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.SSSZ");
+        map.put("timestamp",timestampFormat.format(new Date()));
+
+        map.put("perfType","IOInfo");
+        map.put("type","P");
 
         if (getTag() != null) {
             map.put("tag", getTag());

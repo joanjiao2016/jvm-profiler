@@ -16,6 +16,7 @@
 
 package com.uber.profiling.profilers;
 
+import com.uber.profiling.ArgumentUtils;
 import com.uber.profiling.Profiler;
 import com.uber.profiling.Reporter;
 import com.uber.profiling.util.AgentLogger;
@@ -31,10 +32,8 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryUsage;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class CpuAndMemoryProfiler extends ProfilerBase implements Profiler {
     public final static String PROFILER_NAME = "CpuAndMemory";
@@ -178,7 +177,7 @@ public class CpuAndMemoryProfiler extends ProfilerBase implements Profiler {
         map.put("name", getProcessName());
         map.put("host", getHostName());
         map.put("processUuid", getProcessUuid());
-        map.put("appId", getAppId());
+        map.put("id", getAppId());
 
         if (getTag() != null) {
             map.put("tag", getTag());
@@ -214,6 +213,12 @@ public class CpuAndMemoryProfiler extends ProfilerBase implements Profiler {
         if (procStatusVmHWM != null) {
             map.put("vmHWM", procStatusVmHWM);
         }
+
+        SimpleDateFormat timestampFormat = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.SSSZ");
+        map.put("timestamp",timestampFormat.format(new Date()));
+
+        map.put("perfType","usedCpuMem");
+        map.put("type","P");
 
         if (reporter != null) {
             reporter.report(PROFILER_NAME, map);

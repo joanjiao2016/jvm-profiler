@@ -47,7 +47,12 @@ public class ProcessUtils {
     public static List<String> getJvmInputArguments() {
         RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
         List<String> jvmArgs = runtimeMXBean.getInputArguments();
-        return jvmArgs == null ? new ArrayList<>() : jvmArgs;
+        if(jvmArgs == null)
+            return  new ArrayList<>();
+        else
+            return  jvmArgs;
+        //jdk7
+//        return jvmArgs == null ? new ArrayList<>() : jvmArgs;
     }
 
     public static Long getJvmXmxBytes() {

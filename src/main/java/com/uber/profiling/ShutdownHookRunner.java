@@ -31,9 +31,16 @@ public class ShutdownHookRunner implements Runnable {
     private List<AutoCloseable> closeables;
 
     public ShutdownHookRunner(Collection<Profiler> profilers, Collection<Reporter> reporters, Collection<AutoCloseable> objectsToCloseOnShutdown) {
-        this.profilers = profilers == null ? new ArrayList<>() : new ArrayList<>(profilers);
-        this.reporters = reporters == null ? new ArrayList<>() : new ArrayList<>(reporters);
-        this.closeables = objectsToCloseOnShutdown == null ? new ArrayList<>() : new ArrayList<>(objectsToCloseOnShutdown);
+  //jdk7
+   //     this.profilers = profilers == null ? new ArrayList<>() : new ArrayList<>(profilers);
+        this.profilers = profilers == null ? new ArrayList<Profiler>() : new ArrayList<>(profilers);
+
+//        this.reporters = reporters == null ? new ArrayList<>() : new ArrayList<>(reporters);
+        this.reporters = reporters == null ? new ArrayList<Reporter>() : new ArrayList<>(reporters);
+
+//        this.closeables = objectsToCloseOnShutdown == null ? new ArrayList<>() : new ArrayList<>(objectsToCloseOnShutdown);
+        this.closeables = objectsToCloseOnShutdown == null ? new ArrayList<AutoCloseable>() : new ArrayList<>(objectsToCloseOnShutdown);
+
     }
 
     @Override

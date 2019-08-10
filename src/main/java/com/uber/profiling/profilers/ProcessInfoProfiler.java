@@ -26,6 +26,8 @@ import com.uber.profiling.util.SparkAppCmdInfo;
 import com.uber.profiling.util.SparkUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,7 @@ public class ProcessInfoProfiler extends ProfilerBase implements Profiler {
     private String cmdline = "";
 
     private Reporter reporter;
+
 
     public ProcessInfoProfiler(Reporter reporter) {
         setReporter(reporter);
@@ -64,11 +67,15 @@ public class ProcessInfoProfiler extends ProfilerBase implements Profiler {
         
         map.put("agentVersion", AgentImpl.VERSION);
         
-        map.put("epochMillis", System.currentTimeMillis());
+    //    map.put("epochMillis", System.currentTimeMillis());
         map.put("name", getProcessName());
         map.put("host", getHostName());
         map.put("processUuid", getProcessUuid());
-        map.put("appId", getAppId());
+        map.put("id", getAppId());
+        map.put("perfType","ProcessInfo");
+        map.put("type","P");
+        SimpleDateFormat timestampFormat = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss.SSSZ");
+        map.put("timestamp",timestampFormat.format(new Date()));
 
         if (getTag() != null) {
             map.put("tag", getTag());

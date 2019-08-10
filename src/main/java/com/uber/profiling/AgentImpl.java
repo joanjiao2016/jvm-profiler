@@ -63,7 +63,10 @@ public class AgentImpl {
         String processUuid = UUID.randomUUID().toString();
 
         String appId = null;
-        
+
+        //joan
+        String cluster = null;
+
         String appIdVariable = arguments.getAppIdVariable();
         if (appIdVariable != null && !appIdVariable.isEmpty()) {
             appId = System.getenv(appIdVariable);
@@ -78,6 +81,12 @@ public class AgentImpl {
             instrumentation.addTransformer(new JavaAgentFileTransformer(arguments.getDurationProfiling(), arguments.getArgumentProfiling()));
         }
 
+//        //joan
+//        if (cluster == null || cluster.isEmpty()) {
+//            cluster = SparkUtils.getCluster();
+//        }
+
+
         List<Profiler> profilers = createProfilers(reporter, arguments, processUuid, appId);
         
         ProfilerGroup profilerGroup = startProfilers(profilers);
@@ -89,7 +98,9 @@ public class AgentImpl {
     public ProfilerGroup startProfilers(Collection<Profiler> profilers) {
         if (started) {
             logger.warn("Profilers already started, do not start it again");
-            return new ProfilerGroup(new ArrayList<>(), new ArrayList<>());
+            return new ProfilerGroup(new ArrayList<Profiler>(), new ArrayList<Profiler>());
+            //jdk7
+//            return new ProfilerGroup(new ArrayList<>(), new ArrayList<>());
         }
 
         List<Profiler> oneTimeProfilers = new ArrayList<>();
@@ -129,10 +140,11 @@ public class AgentImpl {
         return new ProfilerGroup(oneTimeProfilers, periodicProfilers);
     }
 
+    //joan
     private List<Profiler> createProfilers(Reporter reporter, Arguments arguments, String processUuid, String appId) {
         String tag = arguments.getTag();
-        String cluster = arguments.getCluster();
         long metricInterval = arguments.getMetricInterval();
+        String cluster = arguments.getCluster();
 
         List<Profiler> profilers = new ArrayList<>();
 
@@ -142,8 +154,8 @@ public class AgentImpl {
         cpuAndMemoryProfiler.setIntervalMillis(metricInterval);
         cpuAndMemoryProfiler.setProcessUuid(processUuid);
         cpuAndMemoryProfiler.setAppId(appId);
-
         profilers.add(cpuAndMemoryProfiler);
+
 
         ProcessInfoProfiler processInfoProfiler = new ProcessInfoProfiler(reporter);
         processInfoProfiler.setTag(tag);

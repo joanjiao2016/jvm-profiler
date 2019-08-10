@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 public class YamlConfigProvider implements ConfigProvider {
     private static final AgentLogger logger = AgentLogger.getLogger(YamlConfigProvider.class.getName());
@@ -70,13 +71,28 @@ public class YamlConfigProvider implements ConfigProvider {
         byte[] bytes;
         
         try {
+            //jdk7
+//            bytes = new ExponentialBackoffRetryPolicy<byte[]>(3, 100)
+//                    .attempt(() -> {
+//                        String filePathLowerCase = configFilePathOrUrl.toLowerCase();
+//                        if (filePathLowerCase.startsWith("http://") || filePathLowerCase.startsWith("https://")) {
+//                            return getHttp(configFilePathOrUrl);
+//                        } else {
+//                            return Files.readAllBytes(Paths.get(configFilePathOrUrl));
+//                        }
+//                    });
+//
+            final String cf = configFilePathOrUrl;
             bytes = new ExponentialBackoffRetryPolicy<byte[]>(3, 100)
-                    .attempt(() -> {
-                        String filePathLowerCase = configFilePathOrUrl.toLowerCase();
-                        if (filePathLowerCase.startsWith("http://") || filePathLowerCase.startsWith("https://")) {
-                            return getHttp(configFilePathOrUrl);
-                        } else {
-                            return Files.readAllBytes(Paths.get(configFilePathOrUrl));
+                    .attempt(new Callable<byte[]>() {
+                        @Override
+                        public byte[] call() throws Exception {
+                            String filePathLowerCase = cf.toLowerCase();
+                            if (filePathLowerCase.startsWith("http://") || filePathLowerCase.startsWith("https://")) {
+                                return getHttp(cf);
+                            } else {
+                                return Files.readAllBytes(Paths.get(cf));
+                            }
                         }
                     });
             
@@ -157,15 +173,41 @@ public class YamlConfigProvider implements ConfigProvider {
     }
     
     private static void addConfig(Map<String, Map<String, List<String>>> config, String override, String key, Object value) {
-        Map<String, List<String>> configMap = config.computeIfAbsent(override, k -> new HashMap<>());
-        
+        //jdk7
+//        Map<String, List<String>> configMap = config.computeIfAbsent(override, k -> new HashMap<>());
+        Map<String, List<String>> configMap = null;
+        if(config.containsKey(override))
+            configMap = config.get(override);
+        else{
+            configMap = new HashMap<String, List<String>>();
+            config.put(override,configMap);
+        }
+
         if (value instanceof List) {
-            List<String> configValueList = configMap.computeIfAbsent(key, k -> new ArrayList<>());
+            //jdk7
+//            List<String> configValueList = configMap.computeIfAbsent(key, k -> new ArrayList<>());
+            List<String> configValueList = null;
+            if(configMap.containsKey(key))
+                configValueList = configMap.get(key);
+            else{
+                configValueList = new ArrayList<>();
+                configMap.put(key,configValueList);
+            }
+
             for (Object entry : (List)value) {
                 configValueList.add(entry.toString());
             }
         } else if (value instanceof Object[]) {
-            List<String> configValueList = configMap.computeIfAbsent(key, k -> new ArrayList<>());      
+            //jdk7
+//            List<String> configValueList = configMap.computeIfAbsent(key, k -> new ArrayList<>());
+            List<String> configValueList = null;
+            if(configMap.containsKey(key))
+                configValueList = configMap.get(key);
+            else{
+                configValueList = new ArrayList<>();
+                configMap.put(key,configValueList);
+            }
+
             for (Object entry : (Object[])value) {
                 configValueList.add(entry.toString());
             }
@@ -178,7 +220,16 @@ public class YamlConfigProvider implements ConfigProvider {
                  }
             }
         } else {
-            List<String> configValueList = configMap.computeIfAbsent(key, k -> new ArrayList<>());
+            //jdk7
+//            List<String> configValueList = configMap.computeIfAbsent(key, k -> new ArrayList<>());
+            List<String> configValueList = null;
+            if(configMap.containsKey(key))
+                configValueList = configMap.get(key);
+            else{
+                configValueList = new ArrayList<>();
+                configMap.put(key,configValueList);
+            }
+
             configValueList.add(value.toString());
         }
     }

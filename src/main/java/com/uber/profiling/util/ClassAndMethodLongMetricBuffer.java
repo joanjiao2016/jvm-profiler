@@ -28,7 +28,14 @@ public class ClassAndMethodLongMetricBuffer {
 
     public void appendValue(String className, String methodName, String metricName, long value) {
         ClassAndMethodMetricKey methodMetricKey = new ClassAndMethodMetricKey(className, methodName, metricName);
-        Histogram histogram = metrics.computeIfAbsent(methodMetricKey, key -> new Histogram());
+//        Histogram histogram = metrics.computeIfAbsent(methodMetricKey, key -> new Histogram());
+        Histogram histogram = null;
+        if(metrics.containsKey(methodMetricKey))
+            histogram = metrics.get(methodMetricKey);
+        else{
+            histogram = new Histogram();
+            metrics.put(methodMetricKey,histogram);
+        }
         histogram.appendValue(value);
     }
 

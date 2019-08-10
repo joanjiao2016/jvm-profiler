@@ -29,7 +29,15 @@ public class ClassMethodArgumentMetricBuffer {
 
     public void appendValue(String className, String methodName, String argument) {
         ClassAndMethodMetricKey methodMetricKey = new ClassAndMethodMetricKey(className, methodName, argument);
-        AtomicLong counter = metrics.computeIfAbsent(methodMetricKey, key -> new AtomicLong(0));
+        //jdk7
+//        AtomicLong counter = metrics.computeIfAbsent(methodMetricKey, key -> new AtomicLong(0));
+        AtomicLong counter = null;
+        if(metrics.containsKey(methodMetricKey))
+            counter = metrics.get(methodMetricKey);
+        else{
+            counter = new AtomicLong(0);
+            metrics.put(methodMetricKey,counter);
+        }
         counter.incrementAndGet();
     }
 

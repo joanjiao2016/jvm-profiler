@@ -30,7 +30,15 @@ public class StacktraceMetricBuffer {
     private volatile ConcurrentHashMap<Stacktrace, AtomicLong> metrics = new ConcurrentHashMap<>();
 
     public void appendValue(Stacktrace stacktrace) {
-        AtomicLong counter = metrics.computeIfAbsent(stacktrace, key -> new AtomicLong(0));
+        //jdk7
+//        AtomicLong counter = metrics.computeIfAbsent(stacktrace, key -> new AtomicLong(0));
+        AtomicLong counter = null;
+        if(metrics.containsKey(stacktrace)){
+            counter = metrics.get(stacktrace);
+        }else{
+            counter = new AtomicLong(0);
+            metrics.put(stacktrace,counter);
+        }
         counter.incrementAndGet();
     }
 

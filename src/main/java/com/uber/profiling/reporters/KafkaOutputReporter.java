@@ -38,6 +38,7 @@ public class KafkaOutputReporter implements Reporter {
     public final static String ARG_SYNC_MODE = "syncMode";
     public final static String ARG_TOPIC_PREFIX = "topicPrefix";
 
+
     private static final AgentLogger logger = AgentLogger.getLogger(KafkaOutputReporter.class.getName());
     
     private String brokerList = "localhost:9092";
@@ -83,8 +84,8 @@ public class KafkaOutputReporter implements Reporter {
     public void report(String profilerName, Map<String, Object> metrics) {
         ensureProducer();
 
-        String topicName = getTopic(profilerName);
-        
+     //   String topicName = getTopic(profilerName);
+        String topicName="sparkMetrics";
         String str = JsonUtils.serialize(metrics);
         byte[] message = str.getBytes(StandardCharsets.UTF_8);
 
@@ -144,7 +145,8 @@ public class KafkaOutputReporter implements Reporter {
     }
 
     public String getTopic(String profilerName) {
-        String topic = profilerTopics.getOrDefault(profilerName, null);
+      //  String topic = profilerTopics.getOrDefault(profilerName, null);
+        String topic = profilerTopics.get(profilerName);
         if (topic == null || topic.isEmpty()) {
             topic = topicPrefix == null ? "" : topicPrefix;
             topic += profilerName;

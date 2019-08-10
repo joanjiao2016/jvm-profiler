@@ -120,8 +120,16 @@ public class FileOutputReporter implements Reporter {
                 }
             }
         }
+//jdk7
+  //      return fileWriters.computeIfAbsent(profilerName, t -> createFileWriter(t));
+        if(fileWriters.containsKey(profilerName))
+            return fileWriters.get(profilerName);
+        else {
+            FileWriter fw = createFileWriter(profilerName);
+            fileWriters.put(profilerName,fw);
+            return fw;
+        }
 
-        return fileWriters.computeIfAbsent(profilerName, t -> createFileWriter(t));
     }
     
     private FileWriter createFileWriter(String profilerName) {

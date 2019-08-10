@@ -79,12 +79,14 @@ public class Arguments {
 
     public static Arguments parseArgs(String args) {
         if (args == null) {
-            return new Arguments(new HashMap<>());
+//            return new Arguments(new HashMap<>());
+            return new Arguments(new HashMap<String, List<String>>());
         }
 
         args = args.trim();
         if (args.isEmpty()) {
-            return new Arguments(new HashMap<>());
+//            return new Arguments(new HashMap<>());
+            return new Arguments(new HashMap<String, List<String>>());
         }
 
         Map<String, List<String>> map = new HashMap<>();
@@ -180,6 +182,7 @@ public class Arguments {
             appIdRegex = argValue;
             logger.info("Got argument value for appIdRegex: " + appIdRegex);
         }
+
 
         List<String> argValues = ArgumentUtils.getArgumentMultiValues(parsedArgs, ARG_DURATION_PROFILING);
         if (!argValues.isEmpty()) {

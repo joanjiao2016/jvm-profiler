@@ -28,9 +28,14 @@ public class Histogram {
     public void appendValue(long value) {
         count.incrementAndGet();
         sum.addAndGet(value);
+//jdk7
+//        min.updateAndGet(x -> value < x ? value : x);
+//        max.updateAndGet(x -> value > x ? value : x);
+        if(value < min.longValue())
+            min.set(value);
+        if(value > max.longValue())
+            max.set(value);
 
-        min.updateAndGet(x -> value < x ? value : x);
-        max.updateAndGet(x -> value > x ? value : x);
     }
 
     public long getCount() {
